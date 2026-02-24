@@ -65,7 +65,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-07-01' = {
       osDisk: {
         createOption: 'FromImage'
         managedDisk: {
-          storageAccountType: 'Premium_LRS'
+          storageAccountType: 'StandardSSD_LRS'
         }
       }
     }
@@ -80,6 +80,24 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-07-01' = {
       bootDiagnostics: {
         enabled: true
       }
+    }
+  }
+}
+
+// Auto-shutdown schedule to save costs
+resource autoShutdown 'Microsoft.DevTestLab/schedules@2018-09-15' = {
+  name: 'shutdown-computevm-${vm.name}'
+  location: location
+  properties: {
+    status: 'Enabled'
+    taskType: 'ComputeVmShutdownTask'
+    dailyRecurrence: {
+      time: '1900'
+    }
+    timezone: 'UTC'
+    targetResourceId: vm.id
+    notificationSettings: {
+      status: 'Disabled'
     }
   }
 }
