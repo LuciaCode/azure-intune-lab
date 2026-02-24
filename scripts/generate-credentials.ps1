@@ -2,7 +2,7 @@
 # You must be logged into Azure CLI (az login)
 
 $subscriptionId = (az account show --query id -o tsv)
-$resourceGroupName = "YOUR_RESOURCE_GROUP_NAME"
+$resourceGroupName = "rg-intune-lab"
 
 Write-Host "Creating Service Principal for Resource Group: $resourceGroupName" -ForegroundColor Cyan
 
