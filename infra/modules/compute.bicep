@@ -48,7 +48,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2023-07-01' = {
   }
   properties: {
     hardwareProfile: {
-      vmSize: 'Standard_B2ms'
+      vmSize: 'Standard_B2s'
     }
     osProfile: {
       computerName: '${prefix}-vm'
@@ -94,7 +94,7 @@ resource autoShutdown 'Microsoft.DevTestLab/schedules@2018-09-15' = {
     dailyRecurrence: {
       time: '1900'
     }
-    timezone: 'UTC'
+    timeZoneId: 'UTC'
     targetResourceId: vm.id
     notificationSettings: {
       status: 'Disabled'
