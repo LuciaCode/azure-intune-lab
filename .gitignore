@@ -1,0 +1,10 @@
+# Bicep
+*.bicep.json
+visualizer.png
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/
