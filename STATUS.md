@@ -4,33 +4,31 @@
 
 ### 1. Azure Configuration
 - **Status:** [ACTIVE]
-- **User:** `dayilutasa@outlook.com`
-- **Subscription:** `Subscription 1` (b90f7326-3aba-4d2f-bf6d-d6fa49908026)
-- **Tenant:** `41364736-d9c2-48bd-9a22-a52918347aac`
-- **Resource Group:** `rg-intune-lab` [CREATED]
+- **Resource Group:** `rg-intune-lab` (East US)
+- **Budget:** `save` - $100.00 Monthly Cap [SET]
+- **Resource Providers:** Network, Compute, and Storage [REGISTERED]
 
-### 2. GitHub & Git Configuration
-- **GitHub Account:** `LuciaCode` [LOGGED IN]
-- **Git Identity:** `LuciaCode <dayilutasa@outlook.com>` [SET]
-- **Repository:** `https://github.com/LuciaCode/azure-intune-lab` [PUSHED]
+### 2. Infrastructure (Bicep)
+- **VM Name:** `intune-lab-vm`
+- **VM Size:** `Standard_D2s_v3` (Note: B-series currently unavailable in eastus)
+- **Storage:** `StandardSSD_LRS` (Cost Optimized)
+- **Networking:** Standard SKU Public IP (IP: `13.72.72.42`)
+- **Auto-Shutdown:** Daily at 19:00 UTC [ACTIVE]
 
-### 3. Infrastructure (Bicep)
-- **Files:** `infra/main.bicep`, `infra/modules/`
-- **Deployment Status:** [IN PROGRESS] (via GitHub Actions)
-- **Validation:** Bicep templates are valid and deployment workflow is active.
+### 3. Operational Status
+- **Power State:** [DEALLOCATED] (Billing for compute is paused)
+- **Management Script:** `scripts/manage-lab.ps1` (Start/Stop/Status)
+- **Entra ID Status:** Device `intune-lab-vm` is successfully Entra Joined.
 
-## GitHub Secrets
-The following secrets have been configured in the repository:
-1. `AZURE_CREDENTIALS`: Service Principal `github-intune-lab`
-2. `AZURE_SUBSCRIPTION_ID`: `b90f7326-3aba-4d2f-bf6d-d6fa49908026`
-3. `AZURE_RESOURCE_GROUP`: `rg-intune-lab`
-4. `VM_ADMIN_PASSWORD`: [STORED SECURELY]
+## GitHub & Secrets
+- **Repository:** `https://github.com/LuciaCode/azure-intune-lab`
+- **Secrets Configured:** `AZURE_CREDENTIALS`, `AZURE_SUBSCRIPTION_ID`, `AZURE_RESOURCE_GROUP`, `VM_ADMIN_PASSWORD`
 
 ## Next Steps Checklist
 
-1. [x] **Git Identity**
-2. [x] **GitHub Login**
-3. [x] **Azure Setup**
-4. [x] **Repository Setup**
-5. [ ] **Verify Deployment:** Wait for GitHub Action to complete and verify the VM is accessible.
-6. [ ] **Intune Enrollment:** Follow the steps to enroll the VM into Intune.
+1. [x] **Core Infrastructure Deployment**
+2. [x] **Cost Management Setup** (Budget + Auto-shutdown)
+3. [x] **Local Control Script**
+4. [ ] **Intune Automatic Enrollment**: Set "MDM user scope" to All in Intune Admin Center.
+5. [ ] **First Login**: Start VM via script and RDP using local admin or Entra credentials.
+6. [ ] **Verify Enrollment**: Confirm device appears as "Managed" in Intune portal.
