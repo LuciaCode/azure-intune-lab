@@ -2,11 +2,17 @@
 
 This repository contains Azure Bicep templates to deploy a Windows 11 Virtual Machine that is automatically enrolled in Microsoft Intune via Microsoft Entra ID Join.
 
+## Documentation
+
+- **[STATUS.md](./STATUS.md)**: Current deployment status, IP addresses, and cost tracking.
+
 ## Features
 
-- **Windows 11 Enterprise VM**: Optimized for Microsoft 365 environments.
+- **Windows 11 Enterprise VM**: Optimized for Microsoft 365 environments (`Standard_D2s_v3`).
 - **Entra ID Join**: Automatically joins the VM to your Microsoft Entra ID tenant.
 - **Intune Auto-Enrollment**: Triggered by the Entra Join process.
+- **Cost Optimized**: Uses Standard SSD and includes automatic daily shutdown.
+- **Management Scripts**: PowerShell scripts to control the lab and generate credentials.
 - **GitHub Actions**: CI/CD pipeline for automated deployment.
 
 ## Prerequisites
@@ -18,23 +24,40 @@ Before deploying, ensure the following are configured in your Microsoft 365 / Az
     - Set **MDM user scope** to **All** (or a specific group of users).
 2.  **Licenses**:
     - The user account used to log in (or the global settings) must have a valid **Microsoft 365 E3/E5** or **Intune** license.
-3.  **Azure Service Principal**:
-    - Create a Service Principal with `Contributor` access to your resource group for GitHub Actions.
+3.  **Azure CLI**: Installed locally if you wish to use the management scripts.
 
-## GitHub Secrets
+## Setup & Deployment
 
+### 1. Generate Azure Credentials
+Run the helper script to create a Service Principal and generate the required JSON for GitHub:
+```powershell
+.\scripts\generate-credentials.ps1
+```
+
+### 2. Configure GitHub Secrets
 Set the following secrets in your GitHub repository:
 
-- `AZURE_CREDENTIALS`: The JSON output from `az ad sp create-for-rbac`.
+- `AZURE_CREDENTIALS`: The JSON output from the script above.
 - `AZURE_SUBSCRIPTION_ID`: Your Azure Subscription ID.
-- `AZURE_RESOURCE_GROUP`: The name of the Resource Group to deploy into.
+- `AZURE_RESOURCE_GROUP`: The name of the Resource Group to deploy into (default: `rg-intune-lab`).
 - `VM_ADMIN_PASSWORD`: A strong password for the local admin account.
 
-## Deployment
+### 3. Deploy
+Push this code to your GitHub repository. The GitHub Action `Deploy Azure Intune Lab` will trigger automatically.
 
-1.  Push this code to your GitHub repository.
-2.  The GitHub Action `Deploy Azure Intune Lab` will trigger automatically.
-3.  Once deployed, log in to the VM using your **Microsoft Entra ID credentials** (User Principal Name).
+## Local Management
+
+Use the `manage-lab.ps1` script to control the VM state and save costs:
+
+- **Start Lab**: `.\scripts\manage-lab.ps1 -Action Start`
+- **Stop Lab**: `.\scripts\manage-lab.ps1 -Action Stop` (Deallocates the VM to stop billing)
+- **Check Status**: `.\scripts\manage-lab.ps1 -Action Status`
+
+## Cost Management
+
+- **Auto-Shutdown**: The VM is configured to automatically shut down at **19:00 UTC** daily to prevent accidental costs.
+- **Deallocation**: Use the `Stop` action in the management script to ensure compute charges are paused.
+- **Storage**: Uses `StandardSSD_LRS` for a balance of performance and cost.
 
 ## How it works
 
