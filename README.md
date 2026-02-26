@@ -12,7 +12,7 @@ This repository contains Azure Bicep templates to deploy a Windows 11 Virtual Ma
 - **Entra ID Join**: Automatically joins the VM to your Microsoft Entra ID tenant.
 - **Intune Auto-Enrollment**: Triggered by the Entra Join process.
 - **Cost Optimized**: Uses Standard SSD and includes automatic daily shutdown.
-- **Management Scripts**: PowerShell scripts to control the lab and generate credentials.
+- **Management Scripts**: PowerShell scripts to control the lab, generate credentials, and manage M365 users.
 - **GitHub Actions**: CI/CD pipeline for automated deployment.
 
 ## Prerequisites
@@ -47,11 +47,18 @@ Push this code to your GitHub repository. The GitHub Action `Deploy Azure Intune
 
 ## Local Management
 
+### Lab Infrastructure
 Use the `manage-lab.ps1` script to control the VM state and save costs:
 
 - **Start Lab**: `.\scripts\manage-lab.ps1 -Action Start`
 - **Stop Lab**: `.\scripts\manage-lab.ps1 -Action Stop` (Deallocates the VM to stop billing)
 - **Check Status**: `.\scripts\manage-lab.ps1 -Action Status`
+
+### Microsoft Graph (User Management)
+Helper scripts to prepare your M365 tenant:
+
+- **Create Test User**: `.\scripts\setup-graph-user.ps1` (Creates 'Juan Perez' and assigns Business Premium).
+- **Verify MDM Scope**: `.\scripts\verify-mdm-scope.ps1` (Checks if a user is in the enrollment scope).
 
 ## Cost Management
 
