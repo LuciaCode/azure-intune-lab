@@ -19,6 +19,7 @@
 - **Power State:** [DEALLOCATED] (Billing for compute is paused)
 - **Management Script:** `scripts/manage-lab.ps1` (Start/Stop/Status)
 - **Entra ID Status:** Device `intune-lab-vm` is successfully Entra Joined.
+- **Intune Policy:** Edge Governance Policy (Block ChatGPT + uBlock Extension) created and assigned to Juan Perez [ACTIVE]
 
 ## GitHub & Secrets
 - **Repository:** `https://github.com/LuciaCode/azure-intune-lab`
@@ -29,6 +30,7 @@
 1. [x] **Core Infrastructure Deployment**
 2. [x] **Cost Management Setup** (Budget + Auto-shutdown)
 3. [x] **Local Control Script**
-4. [ ] **Intune Automatic Enrollment**: Set "MDM user scope" to All in Intune Admin Center.
-5. [ ] **First Login**: Start VM via script and RDP using local admin or Entra credentials.
-6. [ ] **Verify Enrollment**: Confirm device appears as "Managed" in Intune portal.
+4. [x] **Intune Automatic Enrollment**: MDM user scope set to All.
+5. [x] **First Login**: VM successfully accessed by local admin and Entra credentials.
+6. [x] **Verify Enrollment**: Device appears as "Managed" in Intune portal.
+7. [x] **Policy Deployment**: Edge Governance policy manually configured and assigned.
