@@ -54,6 +54,16 @@ Use the `manage-lab.ps1` script to control the VM state and save costs:
 - **Stop Lab**: `.\scripts\manage-lab.ps1 -Action Stop` (Deallocates the VM to stop billing)
 - **Check Status**: `.\scripts\manage-lab.ps1 -Action Status`
 
+### Remote Desktop (RDP) Setup
+To access the VM as an Entra ID (Cloud) user like Juan Perez:
+
+1. **Classic Login**: Connect with NLA disabled to see the Windows lock screen.
+2. **Entra ID Username**: Use `AzureAD\jperez@cloudcompassconsulting.onmicrosoft.com`.
+3. **Manual Sync**: If Intune policies (like Edge blocking) aren't appearing immediately, run this in an admin PowerShell inside the VM:
+   ```powershell
+   Get-ScheduledTask -TaskName "PushLaunch" | Start-ScheduledTask
+   ```
+
 ### Microsoft Graph (User Management)
 Helper scripts to prepare your M365 tenant:
 

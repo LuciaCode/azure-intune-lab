@@ -16,10 +16,11 @@
 - **Auto-Shutdown:** Daily at 19:00 UTC [ACTIVE]
 
 ### 3. Operational Status
-- **Power State:** [DEALLOCATED] (Billing for compute is paused)
+- **Power State:** [RUNNING]
 - **Management Script:** `scripts/manage-lab.ps1` (Start/Stop/Status)
 - **Entra ID Status:** Device `intune-lab-vm` is successfully Entra Joined.
-- **Intune Policy:** Edge Governance Policy (Block ChatGPT + uBlock Extension) created and assigned to Juan Perez [ACTIVE]
+- **Intune Policy:** Edge Governance Policy (Block ChatGPT + uBlock Extension) created and assigned to Juan Perez [VERIFIED ACTIVE]
+- **Verification Method:** Logged in as `AzureAD\jperez...` and manually triggered `PushLaunch` scheduled task.
 
 ## GitHub & Secrets
 - **Repository:** `https://github.com/LuciaCode/azure-intune-lab`
@@ -34,3 +35,4 @@
 5. [x] **First Login**: VM successfully accessed by local admin and Entra credentials.
 6. [x] **Verify Enrollment**: Device appears as "Managed" in Intune portal.
 7. [x] **Policy Deployment**: Edge Governance policy manually configured and assigned.
+8. [x] **Policy Verification**: Confirmed ChatGPT is blocked and extension is installed.
