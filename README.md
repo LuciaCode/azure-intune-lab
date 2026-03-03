@@ -1,4 +1,13 @@
-# Azure Intune Lab
+#Project goals
+
+The main objective is to implement a cloud-based laboratory environment to test mobile device management (MDM) and security policy enforcement.
+
+Specifically, the aim is to validate the deployment of Intune Configuration Catalog policies to restrict access to generative AI tools (such as ChatGPT) in the Microsoft Edge browser.
+
+Demonstrate the complete management cycle: from user creation and license assignment to device registration and enforced policy verification at the endpoint.
+
+
+## Azure Intune Lab
 
 This repository contains Azure Bicep templates to deploy a Windows 11 Virtual Machine that is automatically enrolled in Microsoft Intune via Microsoft Entra ID Join.
 
@@ -58,7 +67,7 @@ Use the `manage-lab.ps1` script to control the VM state and save costs:
 To access the VM as an Entra ID (Cloud) user like Juan Perez:
 
 1. **Classic Login**: Connect with NLA disabled to see the Windows lock screen.
-2. **Entra ID Username**: Use `AzureAD\jperez@cloudcompassconsulting.onmicrosoft.com`.
+2. **Entra ID Username**: Use `AzureAD\[YOUR_TESTING_USER_DOMAIN]`.
 3. **Manual Sync**: If Intune policies (like Edge blocking) aren't appearing immediately, run this in an admin PowerShell inside the VM:
    ```powershell
    Get-ScheduledTask -TaskName "PushLaunch" | Start-ScheduledTask
