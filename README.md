@@ -1,4 +1,4 @@
-#Project goals
+# Project goals
 
 The main objective is to implement a cloud-based laboratory environment to test mobile device management (MDM) and security policy enforcement.
 
