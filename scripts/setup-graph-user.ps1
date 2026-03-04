@@ -2,8 +2,9 @@
 # Prerequisite: Install-Module Microsoft.Graph
 
 # 1. Authentication Configuration
-$tenantId = "cloudcompassconsulting.onmicrosoft.com"
-$adminUpn = "cloudcompassconsulting@cloudcompassconsulting.onmicrosoft.com"
+# Fill in your tenant and admin info here or pass as parameters
+$tenantId = "<YOUR_TENANT>.onmicrosoft.com"
+$adminUpn = "admin@$tenantId"
 # Note: Interactive login is recommended for the first time to grant permissions.
 # To automate, consider using a Service Principal with a Certificate.
 
@@ -13,12 +14,12 @@ Connect-MgGraph -Scopes "User.ReadWrite.All", "Directory.ReadWrite.All", "Organi
 
 # 2. User Configuration
 $userParams = @{
-    DisplayName = "Juan Perez"
-    GivenName = "Juan"
-    Surname = "Perez"
-    UserPrincipalName = "jperez@cloudcompassconsulting.onmicrosoft.com"
-    MailNickname = "jperez"
-    UsageLocation = "US" # Required for license assignment
+    DisplayName = "Test User"
+    GivenName = "Test"
+    Surname = "User"
+    UserPrincipalName = "testuser@$tenantId"
+    MailNickname = "testuser"
+    UsageLocation = "US"
     AccountEnabled = $true
     PasswordProfile = @{
         ForceChangePasswordNextSignIn = $true

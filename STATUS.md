@@ -12,15 +12,15 @@
 - **VM Name:** `intune-lab-vm`
 - **VM Size:** `Standard_D2s_v3` (Note: B-series currently unavailable in eastus)
 - **Storage:** `StandardSSD_LRS` (Cost Optimized)
-- **Networking:** Standard SKU Public IP (IP: `13.72.72.42`)
+- **Networking:** Standard SKU Public IP (IP: `<VM_PUBLIC_IP>`)
 - **Auto-Shutdown:** Daily at 19:00 UTC [ACTIVE]
 
 ### 3. Operational Status
 - **Power State:** [RUNNING]
 - **Management Script:** `scripts/manage-lab.ps1` (Start/Stop/Status)
 - **Entra ID Status:** Device `intune-lab-vm` is successfully Entra Joined.
-- **Intune Policy:** Edge Governance Policy (Block ChatGPT + uBlock Extension) created and assigned to Juan Perez [VERIFIED ACTIVE]
-- **Verification Method:** Logged in as `AzureAD\jperez...` and manually triggered `PushLaunch` scheduled task.
+- **Intune Policy:** Edge Governance Policy (Block ChatGPT + uBlock Extension) created and assigned to Test User [VERIFIED ACTIVE]
+- **Verification Method:** Logged in as `AzureAD\<TEST_USER_UPN>` and manually triggered `PushLaunch` scheduled task.
 
 ## GitHub & Secrets
 - **Repository:** `https://github.com/LuciaCode/azure-intune-lab`

@@ -19,7 +19,7 @@ This repository contains Azure Bicep templates to deploy a Windows 11 Virtual Ma
 
 - **Windows 11 Enterprise VM**: Optimized for Microsoft 365 environments (`Standard_D2s_v3`).
 - **Entra ID Join**: Automatically joins the VM to your Microsoft Entra ID tenant.
-- **Intune Auto-Enrollment**: Triggered by the Entra Join process.
+- **Intune Auto-Enrollment**: Triggered by the Entra Join process.       
 - **Cost Optimized**: Uses Standard SSD and includes automatic daily shutdown.
 - **Management Scripts**: PowerShell scripts to control the lab, generate credentials, and manage M365 users.
 - **GitHub Actions**: CI/CD pipeline for automated deployment.
@@ -30,7 +30,7 @@ Before deploying, ensure the following are configured in your Microsoft 365 / Az
 
 1.  **Intune Automatic Enrollment**:
     - Go to **Microsoft Entra ID** -> **Mobility (MDM and MAM)** -> **Microsoft Intune**.
-    - Set **MDM user scope** to **All** (or a specific group of users).
+    - Set **MDM user scope** to **All** (or a specific group of users).  
 2.  **Licenses**:
     - The user account used to log in (or the global settings) must have a valid **Microsoft 365 E3/E5** or **Intune** license.
 3.  **Azure CLI**: Installed locally if you wish to use the management scripts.
@@ -49,7 +49,7 @@ Set the following secrets in your GitHub repository:
 - `AZURE_CREDENTIALS`: The JSON output from the script above.
 - `AZURE_SUBSCRIPTION_ID`: Your Azure Subscription ID.
 - `AZURE_RESOURCE_GROUP`: The name of the Resource Group to deploy into (default: `rg-intune-lab`).
-- `VM_ADMIN_PASSWORD`: A strong password for the local admin account.
+- `VM_ADMIN_PASSWORD`: A strong password for the local admin account.    
 
 ### 3. Deploy
 Push this code to your GitHub repository. The GitHub Action `Deploy Azure Intune Lab` will trigger automatically.
@@ -57,26 +57,26 @@ Push this code to your GitHub repository. The GitHub Action `Deploy Azure Intune
 ## Local Management
 
 ### Lab Infrastructure
-Use the `manage-lab.ps1` script to control the VM state and save costs:
+Use the `manage-lab.ps1` script to control the VM state and save costs:  
 
 - **Start Lab**: `.\scripts\manage-lab.ps1 -Action Start`
 - **Stop Lab**: `.\scripts\manage-lab.ps1 -Action Stop` (Deallocates the VM to stop billing)
 - **Check Status**: `.\scripts\manage-lab.ps1 -Action Status`
 
 ### Remote Desktop (RDP) Setup
-To access the VM as an Entra ID (Cloud) user like Juan Perez:
+To access the VM as an Entra ID (Cloud) user:
 
 1. **Classic Login**: Connect with NLA disabled to see the Windows lock screen.
-2. **Entra ID Username**: Use `AzureAD\[YOUR_TESTING_USER_DOMAIN]`.
+2. **Entra ID Username**: Use `AzureAD\<TEST_USER_UPN>`.
 3. **Manual Sync**: If Intune policies (like Edge blocking) aren't appearing immediately, run this in an admin PowerShell inside the VM:
    ```powershell
-   Get-ScheduledTask -TaskName "PushLaunch" | Start-ScheduledTask
+   Get-ScheduledTask -TaskName "PushLaunch" | Start-ScheduledTask        
    ```
 
 ### Microsoft Graph (User Management)
 Helper scripts to prepare your M365 tenant:
 
-- **Create Test User**: `.\scripts\setup-graph-user.ps1` (Creates 'Juan Perez' and assigns Business Premium).
+- **Create Test User**: `.\scripts\setup-graph-user.ps1` (Creates a test user and assigns Business Premium).
 - **Verify MDM Scope**: `.\scripts\verify-mdm-scope.ps1` (Checks if a user is in the enrollment scope).
 
 ## Cost Management

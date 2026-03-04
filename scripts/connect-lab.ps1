@@ -1,8 +1,15 @@
 # Secure connection script for Intune Lab VM
-$vmIp = "13.72.72.42"
-$username = "azureuser"
 $rg = "rg-intune-lab"
 $vmName = "intune-lab-vm"
+$username = "azureuser"
+
+Write-Host "Fetching Public IP address..." -ForegroundColor Cyan
+$vmIp = az network public-ip show -g $rg -n "$($vmName)-pip" --query ipAddress -o tsv
+
+if (-not $vmIp) {
+    Write-Error "Could not retrieve VM IP. Is the VM deployed?"
+    return
+}
 
 # 1. Generate a new secure password
 $newPassword = -join ((65..90) + (97..122) + (48..57) + (33,35,36,37,38) | Get-Random -Count 16 | ForEach-Object {[char]$_})

@@ -1,7 +1,7 @@
-# Helper to verify if Juan Perez is in the Intune Enrollment Scope
+# Helper to verify if test user is in the Intune Enrollment Scope
 Connect-MgGraph -Scopes "Group.Read.All", "User.Read.All"
 
-$targetUser = "jperez@cloudcompassconsulting.onmicrosoft.com"
+$targetUser = "testuser@yourdomain.com" # Update this to your test user
 $user = Get-MgUser -UserId $targetUser
 
 if ($null -eq $user) {
