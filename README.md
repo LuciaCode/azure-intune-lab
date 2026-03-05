@@ -11,6 +11,15 @@ Demonstrate the complete management cycle: from user creation and license assign
 
 This repository contains Azure Bicep templates to deploy a Windows 11 Virtual Machine that is automatically enrolled in Microsoft Intune via Microsoft Entra ID Join.
 
+## Services & Arquitecture
+
+- **Microsoft Intune**: Used for creating and deploying device configuration profiles.
+- **Microsoft Entra ID (Azure AD)**: Used for identity management, security groups, and official device registration.
+- **Microsoft 365 Admin Center**: Used for user administration, assigning licenses, and managing groups.
+- **Azure Virtual Machines**: Acts as the Windows 11 host to apply and test the restrictions.
+
+Microsoft Edge: The target application where the URLBlocklist policies are applied.
+
 ## Documentation
 
 - **[STATUS.md](./STATUS.md)**: Current deployment status, IP addresses, and cost tracking.
@@ -88,3 +97,6 @@ Helper scripts to prepare your M365 tenant:
 ## How it works
 
 The Bicep template uses the `AADLoginForWindows` VM extension. When the VM starts, this extension performs the Entra Join. If your tenant has "Automatic MDM Enrollment" enabled, the VM will automatically check into Intune shortly after the join process completes.
+
+<img width="876" height="553" alt="edge browser session edited" src="https://github.com/user-attachments/assets/325d1bb5-1655-4f15-9f7d-8942b4ec9012" />
+
