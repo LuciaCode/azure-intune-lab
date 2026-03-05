@@ -125,6 +125,15 @@ Go to Settings > Accounts > Access work or school. Click the account managed by 
 
 Once synced, open Edge and verify at edge://policy. Navigating to ChatGPT should now show a blocked screen.
 
+### Microsoft Defender (OS-Level Blocking)
+To enforce restrictions across **all browsers** (Chrome, Firefox, Edge, etc.):
+
+1. **Enable Network Protection**: Run this script to turn on the local enforcement engine:
+   ```powershell
+   .\scripts\enable-defender-protection.ps1
+   ```
+2. **Configure Indicators**: In the [Microsoft Defender Portal](https://security.microsoft.com/), create a **Custom Indicator** (Block) for any URL you want to restrict globally.
+
 ### Microsoft Graph (User Management)
 Helper scripts to prepare your M365 tenant:
 

@@ -19,7 +19,8 @@
 - **Power State:** [RUNNING]
 - **Management Script:** `scripts/manage-lab.ps1` (Start/Stop/Status)
 - **Entra ID Status:** Device `intune-lab-vm` is successfully Entra Joined.
-- **Intune Policy:** Edge Governance Policy (Block ChatGPT + uBlock Extension) created and assigned to Test User [VERIFIED ACTIVE]
+- **Intune Policy:** Edge Governance Policy (Block ChatGPT + uBlock Extension) [ACTIVE]
+- **Defender Protection:** Network Protection enabled on VM (OS-level block across all browsers) [ACTIVE]
 - **Verification Method:** Logged in as `AzureAD\<TEST_USER_UPN>` and manually triggered `PushLaunch` scheduled task.
 
 ## GitHub & Secrets
