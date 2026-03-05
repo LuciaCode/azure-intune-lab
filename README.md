@@ -125,14 +125,30 @@ Go to Settings > Accounts > Access work or school. Click the account managed by 
 
 Once synced, open Edge and verify at edge://policy. Navigating to ChatGPT should now show a blocked screen.
 
-### Microsoft Defender (OS-Level Blocking)
-To enforce restrictions across **all browsers** (Chrome, Firefox, Edge, etc.):
+### Bulletproof Web Filtering (Defender)
+To enforce restrictions across **all browsers** (Chrome, Firefox, Edge, etc.) using Microsoft Defender for Business:
 
-1. **Enable Network Protection**: Run this script to turn on the local enforcement engine:
-   ```powershell
-   .\scripts\enable-defender-protection.ps1
-   ```
-2. **Configure Indicators**: In the [Microsoft Defender Portal](https://security.microsoft.com/), create a **Custom Indicator** (Block) for any URL you want to restrict globally.
+#### 1. Enable Network Protection on the VM
+Run this script to turn on the local enforcement engine:
+```powershell
+.\scripts\enable-defender-protection.ps1
+```
+
+#### 2. Configure Defender Portal (Security Center)
+Since cloud configurations require manual portal access, follow these steps:
+
+1. **Enable Custom Indicators (One-time setup)**:
+   - Go to [security.microsoft.com](https://security.microsoft.com/) > **Settings** > **Endpoints** > **Advanced features**.
+   - Scroll to **Custom network indicators** and toggle it **On**. Click **Save preferences**.
+
+2. **Create the Block Rule**:
+   - Go to **Settings** > **Endpoints** > **Indicators**.
+   - Select the **URLs/Domains** tab and click **Add item**.
+   - **URL/Domain**: `chatgpt.com`
+   - **Action**: Select **Block execution**.
+   - **Title**: `AI Governance - Block ChatGPT`
+   - **Scope**: Select **All devices in my scope**.
+   - Click **Save**. (Repeat for `openai.com/chat`).
 
 ### Microsoft Graph (User Management)
 Helper scripts to prepare your M365 tenant:
