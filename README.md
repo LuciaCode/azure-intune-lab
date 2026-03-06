@@ -2,7 +2,9 @@
 
 The main objective is to implement a cloud-based laboratory environment to test mobile device management (MDM) and security policy enforcement.
 
-Specifically, the aim is to validate the deployment of Intune Configuration Catalog policies to restrict access to generative AI tools (such as ChatGPT) in the Microsoft Edge browser.
+Specifically, the aim is to validate and compare two different architectures to restrict access to generative AI tools (such as ChatGPT) on corporate devices:
+1. **Application-Level Enforcement**: Using Intune Configuration Catalog policies to lock down the Microsoft Edge browser.
+2. **OS/Network-Level Enforcement**: Using Microsoft Defender Network Protection to block access across all browsers (Chrome, Firefox, etc.) and CLI tools.
 
 Demonstrate the complete management cycle: from user creation and license assignment to device registration and enforced policy verification at the endpoint.
 
@@ -14,6 +16,7 @@ This repository contains Azure Bicep templates to deploy a Windows 11 Virtual Ma
 ## Services & Arquitecture
 
 - **Microsoft Intune**: Used for creating and deploying device configuration profiles.
+- **Microsoft Defender for Business**: Used for enforcing OS-level Web Content Filtering and Network Protection.
 - **Microsoft Entra ID (Azure AD)**: Used for identity management, security groups, and official device registration.
 - **Microsoft 365 Admin Center**: Used for user administration, assigning licenses, and managing groups.
 - **Azure Virtual Machines**: Acts as the Windows 11 host to apply and test the restrictions.
@@ -71,9 +74,11 @@ Set the following secrets in your GitHub repository:
 ### 3. Deploy
 Push this code to your GitHub repository. The GitHub Action `Deploy Azure Intune Lab` will trigger automatically.
 
-## Intune Policy Configuration
+## Method 1: Intune Policy Configuration (Edge-Only)
 
+Best for: Organizations that strictly enforce Microsoft Edge as the only allowed browser.
 To block AI tools like ChatGPT, you must deploy a Settings Catalog profile in Intune.
+
 1. **Create a Security Group**: Intune is optimized to use Security Groups for policy management. Create a group (e.g., Intune - Block ChatGPT) and add your test user to it.
 2. **Create the Profile**: In Intune, create a Windows 10 and later profile using the Settings catalog.
 3. **Configure Edge Policies**:
@@ -89,6 +94,41 @@ To block AI tools like ChatGPT, you must deploy a Settings Catalog profile in In
 
 <img width="959" height="508" alt="Security group dashboard member edited" src="https://github.com/user-attachments/assets/dcffa7c1-9ac2-443b-b518-e4fe51a85fce" />
 [Image 4. Security group with member assigned succefully. Microsoft 365 Admin Center]
+
+### Bulletproof Web Filtering (Defender OS-Level)
+
+Best for: Organizations that want to prevent "Shadow IT" bypasses where users download third-party browsers (Chrome, Firefox, Brave) to evade Edge policies.
+To enforce restrictions across **all browsers** (Chrome, Firefox, Edge, etc.) using Microsoft Defender for Business:
+
+#### 1. Enable Network Protection on the VM
+Run this script to turn on the local enforcement engine:
+```powershell
+.\scripts\enable-defender-protection.ps1
+```
+
+#### 2. Configure Defender Portal (Security Center)
+Since cloud configurations require manual portal access, follow these steps:
+
+1. **Enable Custom Indicators (One-time setup)**:
+   - Go to [security.microsoft.com](https://security.microsoft.com/) > **Settings** > **Endpoints** > **Advanced features**.
+   - Scroll to **Custom network indicators** and toggle it **On**. Click **Save preferences**.
+  
+<img width="959" height="508" alt="Custom network indicators" src="https://github.com/user-attachments/assets/30f722ac-f2db-4773-80e0-dff699ac03f4" />
+[Image 5. Enable Custom network indicator. Microsoft Defender]
+
+
+2. **Create the Block Rule**:
+   - Go to **Settings** > **Endpoints** > **Indicators**.
+   - Select the **URLs/Domains** tab and click **Add item**.
+   - **URL/Domain**: `chatgpt.com`
+   - **Action**: Select **Block execution**.
+   - **Title**: `AI Governance - Block ChatGPT`
+   - **Scope**: Select **All devices in my scope**.
+   - Click **Save**.
+  
+<img width="959" height="509" alt="summary indicator Defender" src="https://github.com/user-attachments/assets/807ce88f-8f72-4600-9a68-9d5ad2037a5c" />
+[Image 6. Block Rule summary. Microsoft Defender]
+
 
 ## Local Management
 
@@ -107,7 +147,7 @@ To access the VM as an Entra ID (Cloud) user:
 3. **Fast Pass**: You can also use .\scripts\connect-lab.ps1 to reset the local admin password and automatically launch the RDP window.
 
 <img width="672" height="738" alt="EntraID username edited" src="https://github.com/user-attachments/assets/599956dd-42a7-4d35-8515-5f3c1dd57162" />
-[Image 5. Remote access with Entra ID Username. Microsoft Athentication login window]
+[Image 7. Remote access with Entra ID Username. Microsoft Athentication login window]
 
 ### Policy Verification & Manual Sync 
 If Intune policies (like Edge blocking) aren't appearing immediately:
@@ -121,34 +161,9 @@ Inside the VM, open Windows PowerShell as administrator and run:   ``powershell
 Go to Settings > Accounts > Access work or school. Click the account managed by your organization, click Info, scroll down, and click Sync.
 
 <img width="700" height="550" alt="remote desktop chat block edited" src="https://github.com/user-attachments/assets/89fc3c77-8de0-4001-9849-b513032f7a9d" />
-[Image 6. Edge Policy. Remote Desktop Connection]
+[Image 8. Edge Policy. Remote Desktop Connection]
 
 Once synced, open Edge and verify at edge://policy. Navigating to ChatGPT should now show a blocked screen.
-
-### Bulletproof Web Filtering (Defender)
-To enforce restrictions across **all browsers** (Chrome, Firefox, Edge, etc.) using Microsoft Defender for Business:
-
-#### 1. Enable Network Protection on the VM
-Run this script to turn on the local enforcement engine:
-```powershell
-.\scripts\enable-defender-protection.ps1
-```
-
-#### 2. Configure Defender Portal (Security Center)
-Since cloud configurations require manual portal access, follow these steps:
-
-1. **Enable Custom Indicators (One-time setup)**:
-   - Go to [security.microsoft.com](https://security.microsoft.com/) > **Settings** > **Endpoints** > **Advanced features**.
-   - Scroll to **Custom network indicators** and toggle it **On**. Click **Save preferences**.
-
-2. **Create the Block Rule**:
-   - Go to **Settings** > **Endpoints** > **Indicators**.
-   - Select the **URLs/Domains** tab and click **Add item**.
-   - **URL/Domain**: `chatgpt.com`
-   - **Action**: Select **Block execution**.
-   - **Title**: `AI Governance - Block ChatGPT`
-   - **Scope**: Select **All devices in my scope**.
-   - Click **Save**. (Repeat for `openai.com/chat`).
 
 ### Microsoft Graph (User Management)
 Helper scripts to prepare your M365 tenant:
@@ -164,6 +179,8 @@ Helper scripts to prepare your M365 tenant:
 
 ## Final Result
 
+Once the policies and rules are apply, chatgpt should be succefully block like in the image below.
+
 <img width="876" height="553" alt="edge browser session edited" src="https://github.com/user-attachments/assets/325d1bb5-1655-4f15-9f7d-8942b4ec9012" />
-[Image 7. ChatGPT.com is blocked in the edge browser session. Remote Desktop Connection]
+[Image 9. ChatGPT.com is blocked in the edge browser session. Remote Desktop Connection]
 
