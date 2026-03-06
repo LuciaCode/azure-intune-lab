@@ -3,15 +3,10 @@
 The main objective is to implement a cloud-based laboratory environment to test mobile device management (MDM) and security policy enforcement.
 
 Specifically, the aim is to validate and compare two different architectures to restrict access to generative AI tools (such as ChatGPT) on corporate devices:
-1. **Application-Level Enforcement**: Using Intune Configuration Catalog policies to lock down the Microsoft Edge browser.
+1. **Application-Level Enforcement**: Using Intune Configuration Catalog policies for browser-specific lockdowns.
 2. **OS/Network-Level Enforcement**: Using Microsoft Defender Network Protection to block access across all browsers (Chrome, Firefox, etc.) and CLI tools.
 
 Demonstrate the complete management cycle: from user creation and license assignment to device registration and enforced policy verification at the endpoint.
-
-
-## Azure Intune Lab
-
-This repository contains Azure Bicep templates to deploy a Windows 11 Virtual Machine that is automatically enrolled in Microsoft Intune via Microsoft Entra ID Join.
 
 ## Services & Arquitecture
 
@@ -20,7 +15,6 @@ This repository contains Azure Bicep templates to deploy a Windows 11 Virtual Ma
 - **Microsoft Entra ID (Azure AD)**: Used for identity management, security groups, and official device registration.
 - **Microsoft 365 Admin Center**: Used for user administration, assigning licenses, and managing groups.
 - **Azure Virtual Machines**: Acts as the Windows 11 host to apply and test the restrictions.
-- **Microsoft Edge**: The target application where the URLBlocklist policies are applied.
 
 ## Repository Structure & Documentation
 
@@ -76,7 +70,10 @@ Push this code to your GitHub repository. The GitHub Action `Deploy Azure Intune
 
 ## Method 1: Intune Policy Configuration (Edge-Only)
 
-Best for: Organizations that strictly enforce Microsoft Edge as the only allowed browser.
+- Action: Deploys a URLBlocklist directly to the browser.
+- Best for: Organizations that strictly enforce Microsoft Edge as the only allowed browser.
+- Vulnerability: Users can bypass this by simply downloading a different browser (like Firefox) that doesn't respect Intune's Edge/Chrome policies.
+
 To block AI tools like ChatGPT, you must deploy a Settings Catalog profile in Intune.
 
 1. **Create a Security Group**: Intune is optimized to use Security Groups for policy management. Create a group (e.g., Intune - Block ChatGPT) and add your test user to it.
@@ -95,9 +92,19 @@ To block AI tools like ChatGPT, you must deploy a Settings Catalog profile in In
 <img width="959" height="508" alt="Security group dashboard member edited" src="https://github.com/user-attachments/assets/dcffa7c1-9ac2-443b-b518-e4fe51a85fce" />
 [Image 4. Security group with member assigned succefully. Microsoft 365 Admin Center]
 
-### Bulletproof Web Filtering (Defender OS-Level)
+### Method 2: Defender Network Protection (OS-Wide)
 
-Best for: Organizations that want to prevent "Shadow IT" bypasses where users download third-party browsers (Chrome, Firefox, Brave) to evade Edge policies.
+- Action: The Windows OS itself monitors network requests. If any app (even a command-line tool) tries to reach a blocked domain, the OS kills the connection.
+- Best for: Organizations that want to prevent "Shadow IT" bypasses where users download third-party browsers (Chrome, Firefox, Brave) to evade Edge policies.
+- Result: ChatGPT is blocked in Edge, Chrome, Firefox, and even via PowerShell.
+
+This Method uses a four-layered "trap" to ensure AI governance:
+Layer,Component,Function
+1. Defender Indicators: Identifies chatgpt.com as a restricted domain in the cloud. ---> The Brain.
+2. Network Protection: The OS-level engine that physically kills the connection. ---> The Muscle.
+3. QUIC Disabled:"Prevents browsers from using ""secret"" UDP tunnels to bypass the muscle." ---> The Tunnel Guard.
+4. DoH Disabled: Prevents browsers from hiding the destination name via encrypted DNS. --> The Encryption Guard
+
 To enforce restrictions across **all browsers** (Chrome, Firefox, Edge, etc.) using Microsoft Defender for Business:
 
 #### 1. Enable Network Protection on the VM
@@ -127,7 +134,25 @@ Since cloud configurations require manual portal access, follow these steps:
    - Click **Save**.
   
 <img width="959" height="509" alt="summary indicator Defender" src="https://github.com/user-attachments/assets/807ce88f-8f72-4600-9a68-9d5ad2037a5c" />
+
 [Image 6. Block Rule summary. Microsoft Defender]
+
+After setting the previous Block rule, Windows Security will trigger a informative alert like the image below
+
+<img width="289" height="161" alt="block chatgpt firefox full windows alert cut" src="https://github.com/user-attachments/assets/64763e4d-f750-40a0-9e94-9361c90cb774" />
+
+[Image 7. Windows Security alert. Remote Desktop Connection]
+
+3. **Close the "QUIC" Tunnel**:
+Google Chrome and Edge often use the QUIC protocol (UDP 443), which can sneak past traditional web filters. We disabled this via Intune to force all traffic through standard, inspectable TCP channels.
+
+4. **DNS-over-HTTPS (DoH)**:
+Modern browsers "whisper" website names to the internet using encrypted DNS. We disabled DoH to ensure the OS can see the request for chatgpt.com and block it.
+
+- Configuration: Applied via Intune Settings Catalog: Control the mode of DNS-over-HTTPS as well as QUIC -> Disabled.
+
+<img width="1914" height="1002" alt="DNS over HTTPS" src="https://github.com/user-attachments/assets/a1f0529a-abdc-4db2-af6e-a1187ea000fa" />
+[Image 8. QUIC protocol and DNS-over-HTTPS disable. Microsoft Intune Admin Center]
 
 
 ## Local Management
@@ -147,7 +172,7 @@ To access the VM as an Entra ID (Cloud) user:
 3. **Fast Pass**: You can also use .\scripts\connect-lab.ps1 to reset the local admin password and automatically launch the RDP window.
 
 <img width="672" height="738" alt="EntraID username edited" src="https://github.com/user-attachments/assets/599956dd-42a7-4d35-8515-5f3c1dd57162" />
-[Image 7. Remote access with Entra ID Username. Microsoft Athentication login window]
+[Image 9. Remote access with Entra ID Username. Microsoft Athentication login window]
 
 ### Policy Verification & Manual Sync 
 If Intune policies (like Edge blocking) aren't appearing immediately:
@@ -161,7 +186,7 @@ Inside the VM, open Windows PowerShell as administrator and run:   ``powershell
 Go to Settings > Accounts > Access work or school. Click the account managed by your organization, click Info, scroll down, and click Sync.
 
 <img width="700" height="550" alt="remote desktop chat block edited" src="https://github.com/user-attachments/assets/89fc3c77-8de0-4001-9849-b513032f7a9d" />
-[Image 8. Edge Policy. Remote Desktop Connection]
+[Image 10. Edge Policy. Remote Desktop Connection]
 
 Once synced, open Edge and verify at edge://policy. Navigating to ChatGPT should now show a blocked screen.
 
@@ -179,8 +204,14 @@ Helper scripts to prepare your M365 tenant:
 
 ## Final Result
 
-Once the policies and rules are apply, chatgpt should be succefully block like in the image below.
+Once the policies and rules are apply, chatgpt should be succefully block like in the images below.
 
 <img width="876" height="553" alt="edge browser session edited" src="https://github.com/user-attachments/assets/325d1bb5-1655-4f15-9f7d-8942b4ec9012" />
-[Image 9. ChatGPT.com is blocked in the edge browser session. Remote Desktop Connection]
+
+[Image 11. ChatGPT.com is blocked in the Edge browser session while applying Method 1.Intune Policy Configuration. Remote Desktop Connection]
+
+
+<img width="1596" height="1093" alt="chat block firefox windows alert" src="https://github.com/user-attachments/assets/31a10962-2ca4-424d-a0ba-f4fcc342cfff" />
+
+[Image 12. ChatGPT.com is blocked in FireFox browser while applying Method 2.Defender Network Protection. Remote Desktop Connection] 
 
