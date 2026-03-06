@@ -10,5 +10,13 @@ if ($status -eq 1) {
     Write-Host "Enabling Network Protection (Block mode)..." -ForegroundColor Yellow
     # 0 = Disabled, 1 = Enabled (Block), 2 = Audit Mode
     Set-MpPreference -EnableNetworkProtection Enabled
-    Write-Host "Network Protection has been successfully enabled." -ForegroundColor Green
+    
+    # Disable Secure DNS (DoH) to ensure Defender can inspect DNS traffic
+    Write-Host "Disabling Secure DNS (DoH) at the OS level..." -ForegroundColor Yellow
+    if (-not (Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient")) {
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" -Force
+    }
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" -Name "EnableAutoDoh" -Value 0
+    
+    Write-Host "Network Protection and DNS Policy have been successfully updated." -ForegroundColor Green
 }
