@@ -19,9 +19,10 @@
 - **Power State:** [RUNNING]
 - **Management Script:** `scripts/manage-lab.ps1` (Start/Stop/Status)
 - **Entra ID Status:** Device `intune-lab-vm` is successfully Entra Joined.
+- **Security Strategy:** Transitioned from Edge-specific MDM policies to **OS-level Microsoft Defender Network Protection**.
 - **Intune Policy:** Edge Governance Policy (Block ChatGPT + uBlock Extension) [ACTIVE]
-- **Defender Protection:** Network Protection enabled on VM (OS-level block across all browsers) [ACTIVE]
-- **Verification Method:** Logged in as `AzureAD\<TEST_USER_UPN>` and manually triggered `PushLaunch` scheduled task.
+- **Defender Protection:** Network Protection enabled on VM (OS-level block across all browsers via Custom Indicators) [ACTIVE]
+- **Verification Method:** Verified `EnableNetworkProtection` status on VM and confirmed manual Indicator setup in Defender Portal.
 
 ## GitHub & Secrets
 - **Repository:** `https://github.com/LuciaCode/azure-intune-lab`
