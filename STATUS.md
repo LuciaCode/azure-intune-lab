@@ -16,13 +16,14 @@
 - **Auto-Shutdown:** Daily at 19:00 UTC [ACTIVE]
 
 ### 3. Operational Status
-- **Power State:** [RUNNING]
+- **Power State:** [DEALLOCATED] (Billing for compute is paused)
 - **Management Script:** `scripts/manage-lab.ps1` (Start/Stop/Status)
 - **Entra ID Status:** Device `intune-lab-vm` is successfully Entra Joined.
 - **Security Strategy:** Transitioned from Edge-specific MDM policies to **OS-level Microsoft Defender Network Protection**.
 - **Intune Policy:** Edge Governance Policy (Block ChatGPT + uBlock Extension) [ACTIVE]
-- **Defender Protection:** Network Protection enabled on VM (OS-level block across all browsers via Custom Indicators) [ACTIVE]
-- **Verification Method:** Verified `EnableNetworkProtection` status on VM and confirmed manual Indicator setup in Defender Portal.
+- **Defender Protection:** Network Protection enabled on VM (OS-level block across all browsers) [ACTIVE]
+- **DNS Security:** Forced standard DNS (Disabled DoH) to ensure Defender inspection [ACTIVE]
+- **Verification Method:** Verified `EnableNetworkProtection` and `EnableAutoDoh` registry status on VM.
 
 ## GitHub & Secrets
 - **Repository:** `https://github.com/LuciaCode/azure-intune-lab`
