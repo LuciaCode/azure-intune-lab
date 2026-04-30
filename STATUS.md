@@ -10,13 +10,14 @@
 
 ### 2. Infrastructure (Bicep)
 - **VM Name:** `intune-lab-vm`
-- **VM Size:** `Standard_D2s_v3` (Note: B-series currently unavailable in eastus)
-- **Storage:** `StandardSSD_LRS` (Cost Optimized)
-- **Networking:** Standard SKU Public IP (IP: `<VM_PUBLIC_IP>`)
+- **VM Size:** `Standard_B2s`
+- **Storage:** `StandardSSD_LRS` (Active) | `Standard_LRS` (Cold Storage)
+- **Networking:** Static Public IP (Provisioned on-demand)
 - **Auto-Shutdown:** Daily at 19:00 UTC [ACTIVE]
 
 ### 3. Operational Status
 - **Power State:** [DEALLOCATED] (Billing for compute is paused)
+- **Cost Mode:** [COLD STORAGE] - Disk downgraded and Public IP deleted.
 - **Management Script:** `scripts/manage-lab.ps1` (Start/Stop/Status)
 - **Entra ID Status:** Device `intune-lab-vm` is successfully Entra Joined.
 - **Security Strategy:** Transitioned from Edge-specific MDM policies to **OS-level Microsoft Defender Network Protection**.
