@@ -65,7 +65,7 @@ switch ($Action) {
 
         # 3. Detach and Delete Public IP (Stops IP reservation billing)
         Write-Host "Removing and Deleting Public IP..."
-        az network nic ip-config update -g $rg --nic-name $nicName --name "ipconfig1" --public-ip-address "" --output none
+        az network nic ip-config update -g $rg --nic-name $nicName --name "ipconfig1" --public-ip-address null --output none
         az network public-ip delete -g $rg -n $pipName --output none
 
         Write-Host "Lab is now costing near $0.00/hour." -ForegroundColor Green  
